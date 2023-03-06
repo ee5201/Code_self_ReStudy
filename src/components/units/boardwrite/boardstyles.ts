@@ -170,5 +170,5 @@ export const SubmitButton = styled.button`
   top: 2412px;
   border-radius: 0px;
   padding: 14px 60px 14px 60px;
-  background: rgba(255, 214, 0, 1);
+  background: ${(props) => (props.isColor ? "rgba(255, 214, 0, 1)" : "gray")};
 `;
