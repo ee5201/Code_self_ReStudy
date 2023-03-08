@@ -1,9 +1,12 @@
 import { useMutation } from "@apollo/client";
+import { Modal } from "antd";
+import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
+import { IUpdateBoardInput } from "../../../commons/types/generated/types";
 import BoardPresenter from "./boardpresenter";
-import { CREATE_BOARD } from "./boardqueries";
+import { CREATE_BOARD, UPDATE_BOARD } from "./boardqueries";
 
-export default function BoardContainer() {
+export default function BoardContainer(props) {
   const [Writer, setWriter] = useState("");
   const [Password, setPassword] = useState("");
   const [Contents, setcontents] = useState("");
@@ -13,8 +16,10 @@ export default function BoardContainer() {
   const [address, setaddress] = useState("");
   const [postcode, setpostcode] = useState("");
   const [fileUrls, setFileUrl] = useState(["", "", ""]);
+  const router = useRouter();
 
   const [CREATEBOARD] = useMutation(CREATE_BOARD);
+  const [UPDATEBOARD] = useMutation(UPDATE_BOARD);
   const onChangeWriter = (event: ChangeEvent<HTMLInputElement>) => {
     setWriter(event.currentTarget.value);
     if (
@@ -90,6 +95,38 @@ export default function BoardContainer() {
       });
       console.log(result);
       alert("등록되었습니다.");
+      router.push(`/create_Board_Read/${result.data.createBoard._id}`);
+    } catch (error) {
+      if (error instanceof Error) alert(error.message);
+    }
+  };
+
+  const onClicksubmitChange = async () => {
+    const currentFiles = JSON.stringify(fileUrls);
+    const defaultFiles = JSON.stringify(props.data?.fetchBoard.images);
+    const isChangeFiles = currentFiles !== defaultFiles;
+    const updateBoardInput: IUpdateBoardInput = {};
+    if (Title) updateBoardInput.title = Title;
+    if (Contents) updateBoardInput.contents = Contents;
+    if (isChangeFiles) updateBoardInput.images = fileUrls;
+
+    if (!Title && !Contents && !isChangeFiles) {
+      alert("수정된 내용이 없습니다.");
+      return;
+    }
+    if (!Password) {
+      alert("비밀번호를 입력해주세요");
+      return;
+    }
+    try {
+      const result = await UPDATEBOARD({
+        variables: {
+          boardId: String(router.query.number),
+          password: Password,
+          updateBoardInput: updateBoardInput,
+        },
+      });
+      await router.push(`/create_Board_Read/${result.data?.updateBoard?._id}`);
     } catch (error) {
       if (error instanceof Error) alert(error.message);
     }
@@ -133,6 +170,9 @@ export default function BoardContainer() {
         postcode={postcode}
         onchangeFileUrl={onchangeFileUrl}
         fileUrls={fileUrls}
+        istrue={props.istrue}
+        data={props.data}
+        onClicksubmitChange={onClicksubmitChange}
       />
     </>
   );

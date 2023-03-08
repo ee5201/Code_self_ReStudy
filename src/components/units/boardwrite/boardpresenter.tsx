@@ -9,7 +9,7 @@ export default function BoardPresenter(props: BoardWriteUI) {
   return (
     <div>
       <S.Wrapper>
-        <S.TItle>게시물 등록</S.TItle>
+        <S.TItle>게시물 {props.istrue ? "수정" : "등록"}</S.TItle>
 
         <S.Box>
           <S.InputBox>
@@ -18,6 +18,7 @@ export default function BoardPresenter(props: BoardWriteUI) {
               type="text"
               placeholder="아이디를 입력해주세요"
               onChange={props.onChangeWriter}
+              defaultValue={props.data?.fetchBoard.writer || ""}
             />
           </S.InputBox>
           <S.InputBox>
@@ -37,6 +38,7 @@ export default function BoardPresenter(props: BoardWriteUI) {
               type="text"
               placeholder="제목를 입력해주세요"
               onChange={props.onchangeTitle}
+              defaultValue={props.data?.fetchBoard.title || ""}
             />
           </S.InputBox>
         </S.Box2>
@@ -48,6 +50,7 @@ export default function BoardPresenter(props: BoardWriteUI) {
               type="text"
               placeholder="내용을 입력해주세요"
               onChange={props.onchangeContents}
+              defaultValue={props.data?.fetchBoard.contents || ""}
             />
           </S.InputBox>
         </S.Box2>
@@ -112,7 +115,12 @@ export default function BoardPresenter(props: BoardWriteUI) {
           </div>
         </S.Box3>
 
-        <S.SubmitButton isColor={props.isColor} onClick={props.onClicksubmit}>
+        <S.SubmitButton
+          isColor={props.isColor}
+          onClick={
+            props.istrue ? props.onClicksubmitChange : props.onClicksubmit
+          }
+        >
           등록하기
         </S.SubmitButton>
       </S.Wrapper>
