@@ -15,22 +15,23 @@ export default function BoardCommentlistContainer() {
     IQueryFetchBoardCommentsArgs
   >(FETCH_BOARD_COMMENTS, {
     variables: {
-      boardId: router.query.number,
+      boardId: String(router.query.number),
     },
   });
 
   const onLoadMore = () => {
-    if (!data) return;
+    if (data === undefined) return;
+    // prettier-ignore
 
     void fetchMore({
-      variables: { page: Math.ceil(data?.fetchBoardComments.length / 10) + 1 },
+      variables: { page: Math.ceil(data?.fetchBoardComments.length/10)+ 1},
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult?.fetchBoardComments)
-          return { fetchBoardComments: [...prev.fetchBoardComments] };
+        if (fetchMoreResult.fetchBoardComments === undefined)
+          return { 
+            fetchBoardComments: [...prev.fetchBoardComments] 
+          };
         return {
-          fetchBoardComments: [
-            ...prev.fetchBoardComments,
-            ...fetchMoreResult.fetchBoardComments,
+          fetchBoardComments:[...prev.fetchBoardComments, ...fetchMoreResult.fetchBoardComments,
           ],
         };
       },

@@ -12,9 +12,11 @@ import {
   FETCH_BOARD_COMMENTS,
 } from "./boardcommentlist.queries";
 import * as S from "./boardcommentlist.style";
-import { IBoardCommentItemUI } from "./boardcommentlist.types";
+import { IBoardCommentListUIProps } from "./boardcommentlist.types";
 
-export default function BoardCommentlistPresenter(props: IBoardCommentItemUI) {
+export default function BoardCommentlistPresenter(
+  props: IBoardCommentListUIProps
+) {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const [isOpenDeletModal, setIsOpenDeleteModal] = useState(false);
