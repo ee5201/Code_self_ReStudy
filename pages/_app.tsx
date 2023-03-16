@@ -23,17 +23,26 @@ const firebaseConfig = {
 export const firebaseeApp = initializeApp(firebaseConfig);
 
 // ///////////////////////////////////////////////////////////////
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
 function MYApp({ Component, pageProps }: AppProps) {
   return (
-    <ApolloSetting>
-      <>
-        <Global styles={globalStyles} />
-        <div>
-          <Component {...pageProps} />
-        </div>
-      </>
-    </ApolloSetting>
+    <RecoilRoot>
+      <ApolloSetting>
+        <>
+          <Global styles={globalStyles} />
+          <div>
+            <Component {...pageProps} />
+          </div>
+        </>
+      </ApolloSetting>
+    </RecoilRoot>
   );
 }
 
