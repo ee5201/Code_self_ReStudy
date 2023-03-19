@@ -23,6 +23,8 @@ export default function Firebase() {
     console.log(datas);
   };
 
+  //
+
   return (
     <>
       <button onClick={onclicksubmit}>등록하기</button>

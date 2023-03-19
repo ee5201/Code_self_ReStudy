@@ -17,15 +17,11 @@ const FETCH_BOARDS = gql`
 `;
 
 export default function StaticeRoutedPage() {
-  const { data, fetchMore } = useQuery<
-    Pick<IQuery, "fetchBoards">,
-    IQueryFetchBoardsArgs
-  >(FETCH_BOARDS);
+  const { data, fetchMore } = useQuery(FETCH_BOARDS);
 
-  const OnLoadmore = () => {
-    if (data === undefined) return;
+  const onLoadMore = () => {
     void fetchMore({
-      variables: { page: Math.ceil(data?.fetchBoards.length / 10) + 10 },
+      variables: { page: Math.ceil(data?.fetchBoards.legnth / 10) + 10 },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult.fetchBoards === undefined) {
           return {
@@ -41,15 +37,15 @@ export default function StaticeRoutedPage() {
 
   return (
     <>
-      <InfiniteScroll pageStart={0} loadMore={OnLoadmore} hasMore={true}>
+      <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
         {data?.fetchBoards.map((el) => (
-          <div>
-            <span>{el.title}</span>
-            <span>{el.contents}</span>
+          <div key={el._id}>
+            <div>{el.title}</div>
+            <div>{el.contents}</div>
           </div>
         ))}
         {""}
-        ?? <div></div>
+        ??<div></div>
       </InfiniteScroll>
     </>
   );
