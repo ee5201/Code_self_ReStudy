@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const isEditState = atom({
+export const RecoilstudyRe_1 = atom({
   key: "isEditState",
   default: false,
 });
@@ -8,4 +8,9 @@ export const isEditState = atom({
 export const accessTokenState = atom({
   key: "accessTokenState",
   default: "",
+});
+
+export const Test = atom({
+  key: "test",
+  default: "테스트입니다.",
 });
