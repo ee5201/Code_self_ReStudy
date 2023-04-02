@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
+import { async } from "@firebase/util";
 import { Modal } from "antd";
-import { ChangeEvent, useRef, useState } from "react";
-
+import { useRef, useState } from "react";
 import {
   IMutation,
   IMutationUploadFileArgs,
@@ -23,85 +23,77 @@ const UPLOADFILE = gql`
   }
 `;
 
-export default function GraphqlMutationPage() {
-  const [writer, setwriter] = useState("");
-  const [title, settitle] = useState("");
-  const [contents, setcontents] = useState("");
-  const [image, setimage] = useState("");
-
-  const fileRef = useRef<HTMLInputElement>(null);
-
+export default function ImageTest2() {
+  const [CreateBoard] = useMutation(CREATE_BOARD);
   const [Image] = useMutation<
     Pick<IMutation, "uploadFile">,
     IMutationUploadFileArgs
   >(UPLOADFILE);
-
-  const [Myfunction] = useMutation(CREATE_BOARD);
+  const [image, setimage] = useState("");
+  const [input, setinput] = useState({
+    writer: "",
+    title: "",
+    contents: "",
+    password: "",
+  });
+  const filref = useRef<HTMLInputElement>(null);
+  const Onchangeinput = (event) => {
+    setinput({ ...input, [event.currentTarget.id]: event.currentTarget.value });
+  };
 
   const onCLickSubmit = async () => {
-    const result = await Myfunction({
-      variables: {
-        createBoardInput: {
-          writer: writer,
-          password: "1234",
-          title: title,
-          contents: contents,
-          image: [image],
-        },
-      },
-    });
-    console.log(result);
-  };
-
-  const OnChangeInputWriter = (event: ChangeEvent<HTMLInputElement>) => {
-    setwriter(event.target.value);
-  };
-
-  const OnChangeInputTitle = (event: ChangeEvent<HTMLInputElement>) => {
-    settitle(event.target.value);
-  };
-
-  const OnChangeInputcontents = (event: ChangeEvent<HTMLInputElement>) => {
-    setcontents(event.target.value);
-  };
-
-  const OnChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
-    console.log(file);
-
     try {
-      const result = await Image({ variables: { file } });
-      console.log(result.data?.uploadFile.url);
-      setimage(result.data?.uploadFile.url ?? "");
+      const result = await CreateBoard({
+        variables: {
+          createBoardInput: {
+            ...input,
+            images: [image],
+          },
+        },
+      });
     } catch (error) {
       if (error instanceof Error) Modal.error({ content: error.message });
     }
   };
 
-  const OnClickImage = () => {
-    fileRef.current?.click();
+  const OnClickImage = (event) => {
+    filref.current?.click();
   };
 
+  const OnChangeFile = async (event) => {
+    const file = event.target.files?.[0];
+
+    try {
+      const result = await Image({
+        variables: { file },
+      });
+      setimage(result.data?.uploadFile.url ?? "");
+    } catch (error) {
+      if (error instanceof Error) Modal.error({ content: error.message });
+    }
+  };
   return (
     <>
       작성자:
-      <input type="text" onChange={OnChangeInputWriter} />
+      <input id="writer" type="text" onChange={Onchangeinput} />
       제목:
-      <input type="text" onChange={OnChangeInputTitle} />
+      <input id="title" type="text" onChange={Onchangeinput} />
       내용:
-      <input type="text" onChange={OnChangeInputcontents} />
+      <input id="contents" type="text" onChange={Onchangeinput} />
+      비밀번호:
+      <input id="password" type="text" onChange={Onchangeinput} />
       <button onClick={onCLickSubmit}>등록하기</button>
       <div
         onClick={OnClickImage}
         style={{ width: "50px", height: "50px", backgroundColor: "gray" }}
       >
         이미지 선택
-      </div>
+      </div>{" "}
       <input
         style={{ display: "none" }}
         type="file"
         onChange={OnChangeFile}
-        ref={fileRef}
+        ref={filref}
         // accept="image/jpeg"
       />
       <img src={`https://storage.googleapis.com/${image}`} />

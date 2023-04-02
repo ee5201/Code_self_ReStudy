@@ -46,7 +46,7 @@ export default function GraphqlMutationPage() {
           password: "1234",
           title: title,
           contents: contents,
-          image: [image],
+          images: [image],
         },
       },
     });
